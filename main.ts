@@ -29,6 +29,16 @@ function led_build (num: number) {
     strip.shift(1)
     control.waitMicros(50000)
 }
+function portals () {
+    walk_counter = 0
+    for (let index = 0; index < 4; index++) {
+        strip.setPixelColor(walk_counter, neopixel.colors(NeoPixelColors.Red))
+        strip.show()
+        strip.setPixelColor(walk_counter, neopixel.rgb(0, 0, 0))
+        walk_counter += 1
+        control.waitMicros(200000)
+    }
+}
 function rainbow () {
     strip.showRainbow(1, led_count)
     strip.show()
@@ -114,15 +124,12 @@ function trailing2 (text: string) {
 let blue = 0
 let green = 0
 let red = 0
+let walk_counter = 0
 let strip: neopixel.Strip = null
 let led_count = 0
-led_count = 48
+led_count = 5
 strip = neopixel.create(DigitalPin.P0, led_count, NeoPixelMode.RGB)
 let strip2 = neopixel.create(DigitalPin.P1, led_count, NeoPixelMode.RGB)
 basic.forever(function () {
-    train()
-    sparks()
-    fade_color()
-    RG()
-    rainbow()
+    portals()
 })

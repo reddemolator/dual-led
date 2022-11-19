@@ -23,6 +23,8 @@ def led_build(num: number):
     strip.show()
     strip.shift(1)
     control.wait_micros(50000)
+def portals():
+    strip.set_pixel_color(0, neopixel.colors(NeoPixelColors.RED))
 def rainbow():
     strip.show_rainbow(1, led_count)
     strip.show()
@@ -105,9 +107,5 @@ strip = neopixel.create(DigitalPin.P0, led_count, NeoPixelMode.RGB)
 strip2 = neopixel.create(DigitalPin.P1, led_count, NeoPixelMode.RGB)
 
 def on_forever():
-    train()
-    sparks()
-    fade_color()
-    RG()
-    rainbow()
+    portals()
 basic.forever(on_forever)
