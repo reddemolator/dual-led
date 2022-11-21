@@ -1,7 +1,3 @@
-function led_walk () {
-    strip.shift(1)
-    strip.show()
-}
 function fade_color () {
     strip.clear()
     for (let index = 0; index < 4; index++) {
@@ -23,20 +19,89 @@ function sparks () {
         }
     }
 }
+function OneDown () {
+    strip.clear()
+    strip2.clear()
+    total_leds = led_count * 2
+    counter = 0
+    counter2 = 0
+    for (let index = 0; index < total_leds; index++) {
+        while (counter < total_leds) {
+            if (counter2 < led_count) {
+                strip.setPixelColor(counter - 1, neopixel.colors(NeoPixelColors.Black))
+                strip.setPixelColor(counter, neopixel.colors(NeoPixelColors.Red))
+                strip.show()
+                counter = counter + 1
+                control.waitMicros(100000)
+                if (counter == led_count) {
+                    strip.setPixelColor(counter - 1, neopixel.colors(NeoPixelColors.Black))
+                    strip.show()
+                    counter = 0
+                    break;
+                }
+            } else {
+                while (counter <= total_leds - counter2) {
+                    strip.setPixelColor(counter - 1, neopixel.colors(NeoPixelColors.Black))
+                    strip.setPixelColor(counter, neopixel.colors(NeoPixelColors.Red))
+                    strip.show()
+                    counter = counter + 1
+                    control.waitMicros(100000)
+                }
+                counter2 = counter2 + 1
+                counter = 0
+                if (counter2 > total_leds) {
+                    break;
+                }
+            }
+        }
+        while (counter < led_count - counter2) {
+            strip2.setPixelColor(counter - 1, neopixel.colors(NeoPixelColors.Black))
+            strip2.setPixelColor(counter, neopixel.colors(NeoPixelColors.Red))
+            strip2.show()
+            counter = counter + 1
+            control.waitMicros(100000)
+        }
+        counter2 = counter2 + 1
+        counter = 0
+    }
+    counter = 0
+    for (let index = 0; index < led_count; index++) {
+        strip.setPixelColor(counter, neopixel.colors(NeoPixelColors.Black))
+        strip.show()
+        control.waitMicros(100000)
+        counter = counter + 1
+    }
+    counter = 0
+    for (let index = 0; index < led_count; index++) {
+        strip2.setPixelColor(counter, neopixel.colors(NeoPixelColors.Black))
+        strip2.show()
+        control.waitMicros(100000)
+        counter = counter + 1
+    }
+}
 function led_build (num: number) {
     strip.setPixelColor(0, num)
     strip.show()
     strip.shift(1)
     control.waitMicros(50000)
 }
-function portals () {
+function end_to_end () {
     walk_counter = 0
-    for (let index = 0; index < 4; index++) {
+    for (let index = 0; index < led_count; index++) {
         strip.setPixelColor(walk_counter, neopixel.colors(NeoPixelColors.Red))
         strip.show()
         strip.setPixelColor(walk_counter, neopixel.rgb(0, 0, 0))
         walk_counter += 1
-        control.waitMicros(200000)
+        control.waitMicros(500000)
+    }
+    strip.show()
+    walk_counter = 0
+    for (let index = 0; index < led_count; index++) {
+        strip2.setPixelColor(walk_counter, neopixel.colors(NeoPixelColors.Red))
+        strip2.show()
+        strip2.setPixelColor(walk_counter, neopixel.rgb(0, 0, 0))
+        walk_counter += 1
+        control.waitMicros(500000)
     }
 }
 function rainbow () {
@@ -49,6 +114,25 @@ function rainbow () {
         strip.show()
         control.waitMicros(100000)
     }
+}
+function RG () {
+    strip.clear()
+    for (let index = 0; index < 16; index++) {
+        strip.clear()
+        strip.setPixelColor(0, neopixel.rgb(255, 25, 10))
+        strip.setPixelColor(1, neopixel.rgb(100, 255, 25))
+        for (let index = 0; index < led_count / 2; index++) {
+            strip.shift(2)
+            strip.setPixelColor(0, neopixel.rgb(255, 25, 10))
+            strip.setPixelColor(1, neopixel.rgb(100, 255, 25))
+            strip.show()
+            control.waitMicros(20000)
+        }
+    }
+}
+function led_walk () {
+    strip.shift(1)
+    strip.show()
 }
 function train () {
     strip.clear()
@@ -68,21 +152,6 @@ function bulid_train () {
     led_build(neopixel.colors(NeoPixelColors.Yellow))
     led_build(neopixel.colors(NeoPixelColors.Red))
     led_build(neopixel.colors(NeoPixelColors.Blue))
-}
-function RG () {
-    strip.clear()
-    for (let index = 0; index < 16; index++) {
-        strip.clear()
-        strip.setPixelColor(0, neopixel.rgb(255, 25, 10))
-        strip.setPixelColor(1, neopixel.rgb(100, 255, 25))
-        for (let index = 0; index < led_count / 2; index++) {
-            strip.shift(2)
-            strip.setPixelColor(0, neopixel.rgb(255, 25, 10))
-            strip.setPixelColor(1, neopixel.rgb(100, 255, 25))
-            strip.show()
-            control.waitMicros(20000)
-        }
-    }
 }
 function trailing2 (text: string) {
     if (text == "red") {
@@ -125,11 +194,18 @@ let blue = 0
 let green = 0
 let red = 0
 let walk_counter = 0
+let counter2 = 0
+let counter = 0
+let strip2: neopixel.Strip = null
 let strip: neopixel.Strip = null
 let led_count = 0
-led_count = 5
+let total_leds = 0
+// led_count = 0
+// led_count = 8
+total_leds = led_count * 2
+led_count = 8
 strip = neopixel.create(DigitalPin.P0, led_count, NeoPixelMode.RGB)
-let strip2 = neopixel.create(DigitalPin.P1, led_count, NeoPixelMode.RGB)
+strip2 = neopixel.create(DigitalPin.P1, led_count, NeoPixelMode.RGB)
 basic.forever(function () {
-    portals()
+    OneDown()
 })
